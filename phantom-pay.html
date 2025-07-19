@@ -46,13 +46,24 @@
       const message = "participation loterie";
       const memo = `rouge_${tgid}`;
 
-      const url = `https://phantom.app/ul/v1/transfer?recipient=${address}&amount=${amount}&memo=${encodeURIComponent(memo)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}`;
+      // Lien solana: pour ouvrir l’app Phantom
+      const solanaUrl = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${encodeURIComponent(memo)}`;
 
-      // Redirige automatiquement
-      window.location.href = url;
+      // Lien https fallback (ouvre phantom.com)
+      const phantomWebUrl = `https://phantom.app/ul/v1/transfer?recipient=${address}&amount=${amount}&memo=${encodeURIComponent(memo)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}`;
+
+      // Essaie d'ouvrir l'app solana: sinon propose lien web
+      window.location.href = solanaUrl;
 
       // Lien de secours
-      document.getElementById("phantomLink").href = url;
+      const linkEl = document.getElementById("phantomLink");
+      linkEl.href = solanaUrl;
+
+      // Après 2 secondes, si rien ne s'est passé, propose le lien web
+      setTimeout(() => {
+        linkEl.href = phantomWebUrl;
+        linkEl.textContent = "⛵ Ouvre Phantom Web";
+      }, 2000);
     }
   </script>
 </body>
