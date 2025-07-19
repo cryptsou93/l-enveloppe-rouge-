@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       background-color: #000;
@@ -46,24 +46,14 @@
       const message = "participation loterie";
       const memo = `rouge_${tgid}`;
 
-      // Lien solana: pour ouvrir l’app Phantom
-      const solanaUrl = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${encodeURIComponent(memo)}`;
+      // Deep link Phantom officiel (HTTPS)
+      const phantomLink = `https://phantom.app/ul/v1/transfer?address=${address}&amount=${amount}&memo=${encodeURIComponent(memo)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}`;
 
-      // Lien https fallback (ouvre phantom.com)
-      const phantomWebUrl = `https://phantom.app/ul/v1/transfer?recipient=${address}&amount=${amount}&memo=${encodeURIComponent(memo)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}`;
-
-      // Essaie d'ouvrir l'app solana: sinon propose lien web
-      window.location.href = solanaUrl;
+      // Redirection automatique vers Phantom
+      window.location.href = phantomLink;
 
       // Lien de secours
-      const linkEl = document.getElementById("phantomLink");
-      linkEl.href = solanaUrl;
-
-      // Après 2 secondes, si rien ne s'est passé, propose le lien web
-      setTimeout(() => {
-        linkEl.href = phantomWebUrl;
-        linkEl.textContent = "⛵ Ouvre Phantom Web";
-      }, 2000);
+      document.getElementById("phantomLink").href = phantomLink;
     }
   </script>
 </body>
