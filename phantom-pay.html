@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><meta charset="UTF-8"><title>Pay</title></head>
-<body style="background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;padding:2rem;">
-  <h1>Enveloppe Rouge – test</h1>
-  <div id="info"></div>
-  <a id="phantomLink" href="#" style="display:none;padding:1rem 2rem;background:crimson;color:#fff;border-radius:8px;text-decoration:none;">
-    ⛵ Ouvrir Phantom
-  </a>
+<head><meta charset="UTF-8"><title>Test Phantom</title></head>
+<body style="background:#000;color:#fff;font-family:sans-serif;text-align:center;padding:2rem;">
+  <h1>Test Transaction Phantom</h1>
+  <p id="info"></p>
+  <a id="linkMemo" href="#" style="display:block;margin:20px auto;padding:10px 20px;background:#e53e3e;color:#fff;text-decoration:none;border-radius:8px;">Ouvrir Phantom avec Memo</a>
+  <a id="linkNoMemo" href="#" style="display:block;margin:20px auto;padding:10px 20px;background:#718096;color:#fff;text-decoration:none;border-radius:8px;">Ouvrir Phantom sans Memo</a>
+
   <script>
-    const p = new URLSearchParams(window.location.search);
-    const t = p.get('tgid');
-    if (!t) {
-      document.getElementById('info').innerText = 'Erreur : pas d’ID.';
-    } else {
-      const url = `solana:AiSSEWWcUfx1Hfmfi5r6uHQpmoCkyZmibQpg1p3R81Ki?amount=0.1&memo=rouge_${t}`;
-      document.getElementById('info').innerText = url;
-      window.location.href = url;
-      setTimeout(() => {
-        const btn = document.getElementById('phantomLink');
-        btn.href = url;
-        btn.style.display = 'block';
-      }, 1500);
-    }
+    const params = new URLSearchParams(window.location.search);
+    const tgid = params.get('tgid') || 'testuser';
+
+    const baseAddress = 'AiSSEWWcUfx1Hfmfi5r6uHQpmoCkyZmibQpg1p3R81Ki';
+    const amount = '0.1';
+
+    const urlMemo = `solana:${baseAddress}?amount=${amount}&memo=rouge_${tgid}`;
+    const urlNoMemo = `solana:${baseAddress}?amount=${amount}`;
+
+    document.getElementById('info').innerText = `Test de transaction pour l'UID: ${tgid}`;
+
+    const btnMemo = document.getElementById('linkMemo');
+    btnMemo.href = urlMemo;
+
+    const btnNoMemo = document.getElementById('linkNoMemo');
+    btnNoMemo.href = urlNoMemo;
   </script>
 </body>
 </html>
