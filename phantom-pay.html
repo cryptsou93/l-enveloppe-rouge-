@@ -2,62 +2,50 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Participer à l'Enveloppe Rouge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       background-color: #000;
       color: #fff;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: sans-serif;
       text-align: center;
       padding: 2rem;
     }
     .btn {
-      display: inline-block;
       margin-top: 2rem;
       padding: 1rem 2rem;
       background-color: crimson;
       color: white;
       font-size: 1.2rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       text-decoration: none;
-    }
-    .notice {
-      margin-top: 1rem;
-      font-size: 1rem;
-      color: orange;
     }
   </style>
 </head>
 <body>
-  <h1>🏴‍☠️ Embarque pour le tirage de l'Enveloppe Rouge !</h1>
-  <p>Ta mission : transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
+  <h1>🎯 L'Enveloppe Rouge</h1>
+  <p>Transfère <strong>0.1 SOL</strong> pour participer !</p>
 
-  <p id="preparation">Préparation en cours...</p>
-
-  <a id="phantomLink" href="#" class="btn">⛵ Participer avec Phantom</a>
-
-  <p class="notice">Si rien ne se passe, clique sur les ⋮ dans Telegram et ouvre dans le navigateur</p>
+  <a id="phantomLink" class="btn" href="#">🔑 Participer avec Phantom</a>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const tgid = params.get("tgid");
 
     if (!tgid) {
-      document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
+      document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie depuis Telegram.</p>";
     } else {
       const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
       const amount = 0.1;
       const label = "enveloppe rouge";
-      const message = "participation loterie";
-      const memo = `rouge_${tgid}`;
+      const message = "participation";
+      const memo = `tg_${tgid}`;
 
-      const url = `https://phantom.app/ul/transfer?recipient=${address}&amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
+      const url = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
-      // Affiche le lien pour cliquer manuellement
       document.getElementById("phantomLink").href = url;
-      document.getElementById("preparation").textContent = "Prêt à embarquer ?";
     }
   </script>
 </body>
