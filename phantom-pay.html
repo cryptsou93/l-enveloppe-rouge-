@@ -40,19 +40,24 @@
     if (!tgid) {
       document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
     } else {
-      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki"; // Wallet cible
+      const recipient = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
       const amount = 0.1;
-      const label = "enveloppe rouge";
-      const message = "participation loterie";
-      const memo = `rouge_${tgid}`;
+      const reference = `rouge_${tgid}`;
+      const label = "Enveloppe Rouge";
+      const message = "Participation à la loterie";
 
-      const url = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
+      const url = `https://phantom.app/ul/transfer?to=${recipient}&amount=${amount}&reference=${encodeURIComponent(reference)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&network=testnet`;
 
       // Redirige automatiquement
       window.location.href = url;
 
       // Lien de secours
       document.getElementById("phantomLink").href = url;
+    }
+  </script>
+</body>
+</html>
+
     }
   </script>
 </body>
