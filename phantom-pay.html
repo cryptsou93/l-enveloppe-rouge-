@@ -29,9 +29,9 @@
   <h1>🏴‍☠️ Embarque pour le tirage de l'Enveloppe Rouge !</h1>
   <p>Ta mission : transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
 
-  <p>Préparation en cours...</p>
+  <p>Si rien ne se passe automatiquement, clique sur le bouton ci-dessous :</p>
 
-  <a id="phantomLink" href="#" class="btn">⛵ Si rien ne se passe, clique ici</a>
+  <a id="phantomLink" href="#" class="btn">⛵ Participer avec Phantom</a>
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -40,26 +40,22 @@
     if (!tgid) {
       document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
     } else {
-      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki"; // Wallet cible
+      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
       const amount = 0.1;
       const label = "Enveloppe Rouge";
       const message = "Participation à la loterie";
       const memo = `rouge_${tgid}`;
 
-      // Construire l'URL Solana Pay avec paramètres encodés
-      const url = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
+      const solanaUrl = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
-      // Fonction pour forcer la redirection
-      const openPhantom = () => {
-        window.location.replace(url);
-      };
+      // Lien sur le bouton
+      const btn = document.getElementById("phantomLink");
+      btn.href = solanaUrl;
 
-      document.addEventListener("DOMContentLoaded", () => {
-        // Tente la redirection automatique après 1 seconde
-        setTimeout(openPhantom, 1000);
-        // Lien de secours si la redirection automatique ne fonctionne pas
-        document.getElementById("phantomLink").href = url;
-      });
+      // Essayer une redirection automatique après un délai
+      setTimeout(() => {
+        window.location.replace(solanaUrl);
+      }, 1500);
     }
   </script>
 </body>
