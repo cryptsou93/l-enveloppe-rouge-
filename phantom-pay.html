@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Participation Enveloppe Rouge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       background-color: #000;
@@ -12,8 +12,7 @@
       text-align: center;
       padding: 2rem;
     }
-    .btn {
-      display: inline-block;
+    button {
       margin-top: 2rem;
       padding: 1rem 2rem;
       background-color: crimson;
@@ -21,44 +20,97 @@
       font-size: 1.2rem;
       border: none;
       border-radius: 8px;
-      text-decoration: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h1>🏴‍☠️ Embarque pour le tirage de l'Enveloppe Rouge !</h1>
-  <p>Ta mission : transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
+  <p>Envoie <strong>0.1 SOL</strong> au trésor du Kraken.</p>
 
-  <p>Préparation en cours...</p>
+  <button id="payBtn">Participer avec Phantom</button>
 
-  <a id="phantomLink" href="#" class="btn">⛵ Si rien ne se passe, clique ici</a>
+  <p id="status"></p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.73.0/lib/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-base@0.9.11/dist/index.iife.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@solana/wallet-adapter-phantom@0.18.10/dist/index.iife.min.js"></script>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const tgid = params.get("tgid");
+    (async () => {
+      const statusEl = document.getElementById('status');
+      const payBtn = document.getElementById('payBtn');
+      const { Connection, PublicKey, Transaction, SystemProgram, TransactionInstruction } = solanaWeb3;
+      const { PhantomWalletAdapter } = walletAdapterPhantom;
 
-    if (!tgid) {
-      document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
-    } else {
-      const recipient = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
-      const amount = 0.1;
-      const reference = `rouge_${tgid}`;
-      const label = "Enveloppe Rouge";
-      const message = "Participation à la loterie";
+      // Récupérer tgid depuis l'URL
+      const params = new URLSearchParams(window.location.search);
+      const tgid = params.get("tgid");
+      if (!tgid) {
+        statusEl.textContent = "❌ Erreur : ID utilisateur manquant dans l'URL (paramètre tgid).";
+        payBtn.disabled = true;
+        return;
+      }
 
-      const url = `https://phantom.app/ul/transfer?to=${recipient}&amount=${amount}&reference=${encodeURIComponent(reference)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&network=testnet`;
+      // Adresse destinataire
+      const recipientPubkey = new PublicKey("AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki");
+      const amountSOL = 0.1;
+      const lamports = amountSOL * 1e9; // conversion SOL -> lamports
 
-      // Redirige automatiquement
-      window.location.href = url;
+      // Connexion au réseau (Mainnet ici, change si besoin)
+      const connection = new Connection("https://api.mainnet-beta.solana.com");
 
-      // Lien de secours
-      document.getElementById("phantomLink").href = url;
-    }
-  </script>
-</body>
-</html>
+      // Setup Phantom wallet adapter
+      const wallet = new PhantomWalletAdapter();
 
-    }
+      // Connecter automatiquement si Phantom est disponible
+      payBtn.addEventListener('click', async () => {
+        statusEl.textContent = "⏳ Connexion au wallet Phantom...";
+
+        try {
+          if (!wallet.connected) {
+            await wallet.connect();
+          }
+
+          statusEl.textContent = "⏳ Préparation de la transaction...";
+
+          // Création transaction transfert SOL
+          let transaction = new Transaction().add(
+            SystemProgram.transfer({
+              fromPubkey: wallet.publicKey,
+              toPubkey: recipientPubkey,
+              lamports: lamports,
+            }),
+
+            // Memo instruction (optionnel mais utile)
+            new TransactionInstruction({
+              keys: [],
+              programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+              data: new TextEncoder().encode(`rouge_${tgid}`),
+            })
+          );
+
+          transaction.feePayer = wallet.publicKey;
+
+          // Récupérer le recentBlockhash
+          let { blockhash } = await connection.getLatestBlockhash();
+          transaction.recentBlockhash = blockhash;
+
+          // Demander signature via Phantom
+          statusEl.textContent = "⏳ Signature en cours...";
+          const signed = await wallet.signTransaction(transaction);
+
+          // Envoyer transaction au réseau Solana
+          statusEl.textContent = "⏳ Envoi de la transaction...";
+          const signature = await connection.sendRawTransaction(signed.serialize());
+
+          statusEl.textContent = `✅ Transaction envoyée ! Signature : ${signature}`;
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "❌ Erreur : " + err.message;
+        }
+      });
+    })();
   </script>
 </body>
 </html>
