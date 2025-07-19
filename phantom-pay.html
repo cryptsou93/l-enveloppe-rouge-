@@ -40,27 +40,25 @@
     if (!tgid) {
       document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
     } else {
-      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
+      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki"; // Wallet cible
       const amount = 0.1;
-      const label = "enveloppe rouge";
-      const message = "participation loterie";
+      const label = "Enveloppe Rouge";
+      const message = "Participation à la loterie";
       const memo = `rouge_${tgid}`;
 
+      // Construire l'URL Solana Pay avec paramètres encodés
       const url = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
+      // Fonction pour forcer la redirection
       const openPhantom = () => {
         window.location.replace(url);
       };
 
       document.addEventListener("DOMContentLoaded", () => {
-        // Essayer d'ouvrir Phantom automatiquement après 1s
-        setTimeout(() => {
-          openPhantom();
-        }, 1000);
-
-        // Bouton fallback
-        const btn = document.getElementById("phantomLink");
-        btn.href = url;
+        // Tente la redirection automatique après 1 seconde
+        setTimeout(openPhantom, 1000);
+        // Lien de secours si la redirection automatique ne fonctionne pas
+        document.getElementById("phantomLink").href = url;
       });
     }
   </script>
