@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       background-color: #000;
@@ -46,14 +46,13 @@
       const message = "participation loterie";
       const memo = `rouge_${tgid}`;
 
-      // Deep link Phantom officiel (HTTPS)
-      const phantomLink = `https://phantom.app/ul/v1/transfer?address=${address}&amount=${amount}&memo=${encodeURIComponent(memo)}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}`;
+      const url = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
-      // Redirection automatique vers Phantom
-      window.location.href = phantomLink;
+      // Redirige automatiquement
+      window.location.href = url;
 
       // Lien de secours
-      document.getElementById("phantomLink").href = phantomLink;
+      document.getElementById("phantomLink").href = url;
     }
   </script>
 </body>
