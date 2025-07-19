@@ -38,15 +38,21 @@
     if (!tgid) {
       document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
     } else {
-      const recipient = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
+      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
       const amount = 0.1;
+      const label = "enveloppe rouge";
+      const message = "participation loterie";
       const memo = `rouge_${tgid}`;
-      const redirect = encodeURIComponent("https://cryptsou93.github.io/l-enveloppe-rouge-/merci.html");
 
-      const phantomDeepLink = `https://phantom.app/ul/send?recipient=${recipient}&amount=${amount}&reference=${memo}&label=Enveloppe%20Rouge&message=Participation&app_url=${redirect}`;
+      const solanaLink = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
-      window.location.href = phantomDeepLink;
-      document.getElementById("phantomLink").href = phantomDeepLink;
+      // Redirection automatique
+      setTimeout(() => {
+        window.location.href = solanaLink;
+      }, 100); // petit délai pour permettre au DOM de charger
+
+      // Lien de secours
+      document.getElementById("phantomLink").href = solanaLink;
     }
   </script>
 </body>
