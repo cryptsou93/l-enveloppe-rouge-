@@ -2,61 +2,70 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Envoyer 0.1 SOL avec Memo via Phantom</title>
+  <script src="https://unpkg.com/@solana/web3.js@1.42.0/lib/index.iife.min.js"></script>
   <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: 'Courier New', Courier, monospace;
-      text-align: center;
-      padding: 2rem;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 2rem;
-      padding: 1rem 2rem;
-      background-color: crimson;
-      color: white;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-    }
+    body { font-family: monospace; background: #000; color: #fff; text-align: center; padding: 2rem; }
+    button { background: crimson; color: white; border: none; padding: 1rem 2rem; font-size: 1.2rem; border-radius: 8px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>🏴‍☠️ Embarque pour le tirage de l'Enveloppe Rouge !</h1>
-  <p>Ta mission : transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
-
-  <p>Si rien ne se passe automatiquement, clique sur le bouton ci-dessous :</p>
-
-  <a id="phantomLink" href="#" class="btn">⛵ Participer avec Phantom</a>
+  <h1>🏴‍☠️ Participer à la loterie</h1>
+  <button id="sendTxBtn">Envoyer 0.1 SOL</button>
+  <p id="status"></p>
 
   <script>
+    const sendTxBtn = document.getElementById('sendTxBtn');
+    const status = document.getElementById('status');
+
+    // Récupérer tgid dans l'URL
     const params = new URLSearchParams(window.location.search);
-    const tgid = params.get("tgid");
+    const tgid = params.get('tgid') || 'inconnu';
 
-    if (!tgid) {
-      document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
-    } else {
-      const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
-      const amount = 0.1;
-      const label = "Enveloppe Rouge";
-      const message = "Participation à la loterie";
-      const memo = `rouge_${tgid}`;
+    async function sendTransaction() {
+      if (!window.solana || !window.solana.isPhantom) {
+        alert("Phantom Wallet non détecté !");
+        return;
+      }
 
-      const solanaUrl = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
+      try {
+        await window.solana.connect();
 
-      // Lien sur le bouton
-      const btn = document.getElementById("phantomLink");
-      btn.href = solanaUrl;
+        const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
+        const fromPubkey = window.solana.publicKey;
+        const toPubkey = new solanaWeb3.PublicKey("AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki");
 
-      // Essayer une redirection automatique après un délai
-      setTimeout(() => {
-        window.location.replace(solanaUrl);
-      }, 1500);
+        const transaction = new solanaWeb3.Transaction().add(
+          solanaWeb3.SystemProgram.transfer({
+            fromPubkey,
+            toPubkey,
+            lamports: 0.1 * solanaWeb3.LAMPORTS_PER_SOL
+          })
+        );
+
+        // Ajouter instruction Memo
+        const memoInstruction = new solanaWeb3.TransactionInstruction({
+          keys: [],
+          programId: new solanaWeb3.PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+          data: new TextEncoder().encode("rouge_" + tgid),
+        });
+        transaction.add(memoInstruction);
+
+        transaction.feePayer = fromPubkey;
+        transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+        const signed = await window.solana.signTransaction(transaction);
+        const signature = await connection.sendRawTransaction(signed.serialize());
+        await connection.confirmTransaction(signature, 'confirmed');
+
+        status.textContent = "✅ Transaction envoyée : " + signature;
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Erreur : " + err.message;
+      }
     }
+
+    sendTxBtn.onclick = sendTransaction;
   </script>
 </body>
 </html>
