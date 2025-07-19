@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       background-color: #000;
@@ -23,13 +23,22 @@
       border-radius: 8px;
       text-decoration: none;
     }
+    .notice {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: orange;
+    }
   </style>
 </head>
 <body>
   <h1>🏴‍☠️ Embarque pour le tirage de l'Enveloppe Rouge !</h1>
   <p>Ta mission : transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
-  <p>Préparation en cours...</p>
-  <a id="phantomLink" href="#" class="btn">⛵ Si rien ne se passe, clique ici</a>
+
+  <p id="preparation">Préparation en cours...</p>
+
+  <a id="phantomLink" href="#" class="btn">⛵ Participer avec Phantom</a>
+
+  <p class="notice">Si rien ne se passe, clique sur les ⋮ dans Telegram et ouvre dans le navigateur</p>
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -44,15 +53,11 @@
       const message = "participation loterie";
       const memo = `rouge_${tgid}`;
 
-      const solanaLink = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
+      const url = `https://phantom.app/ul/transfer?recipient=${address}&amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
-      // Redirection automatique
-      setTimeout(() => {
-        window.location.href = solanaLink;
-      }, 100); // petit délai pour permettre au DOM de charger
-
-      // Lien de secours
-      document.getElementById("phantomLink").href = solanaLink;
+      // Affiche le lien pour cliquer manuellement
+      document.getElementById("phantomLink").href = url;
+      document.getElementById("preparation").textContent = "Prêt à embarquer ?";
     }
   </script>
 </body>
