@@ -2,50 +2,66 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Participer à l'Enveloppe Rouge</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participation à la Loterie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       background-color: #000;
       color: #fff;
-      font-family: sans-serif;
+      font-family: 'Courier New', Courier, monospace;
       text-align: center;
       padding: 2rem;
     }
     .btn {
+      display: inline-block;
       margin-top: 2rem;
       padding: 1rem 2rem;
       background-color: crimson;
       color: white;
       font-size: 1.2rem;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <h1>🎯 L'Enveloppe Rouge</h1>
-  <p>Transfère <strong>0.1 SOL</strong> pour participer !</p>
+  <h1>🏴‍☠️ Embarque pour le tirage de l'Enveloppe Rouge !</h1>
+  <p>Ta mission : transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
 
-  <a id="phantomLink" class="btn" href="#">🔑 Participer avec Phantom</a>
+  <p>Préparation en cours...</p>
+
+  <a id="phantomLink" href="#" class="btn">⛵ Si rien ne se passe, clique ici</a>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const tgid = params.get("tgid");
 
     if (!tgid) {
-      document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie depuis Telegram.</p>";
+      document.body.innerHTML = "<h2>❌ Erreur : ID utilisateur manquant.</h2><p>Essaie à nouveau via Telegram.</p>";
     } else {
       const address = "AISSEwWcUFx1HfmFi5R6uhQpmoCKyZmibqPG1P3r81Ki";
       const amount = 0.1;
       const label = "enveloppe rouge";
-      const message = "participation";
-      const memo = `tg_${tgid}`;
+      const message = "participation loterie";
+      const memo = `rouge_${tgid}`;
 
       const url = `solana:${address}?amount=${amount}&label=${encodeURIComponent(label)}&message=${encodeURIComponent(message)}&memo=${memo}`;
 
-      document.getElementById("phantomLink").href = url;
+      const openPhantom = () => {
+        window.location.replace(url);
+      };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Essayer d'ouvrir Phantom automatiquement après 1s
+        setTimeout(() => {
+          openPhantom();
+        }, 1000);
+
+        // Bouton fallback
+        const btn = document.getElementById("phantomLink");
+        btn.href = url;
+      });
     }
   </script>
 </body>
