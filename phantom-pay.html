@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Participation à la Loterie</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { background: #000; color: #fff; font-family: 'Courier New', monospace; text-align: center; padding: 2rem; }
-    .btn { display: inline-block; margin-top: 2rem; padding: 1rem 2rem; background: crimson; color: #fff; font-size:1.2rem; border:none; border-radius:8px; text-decoration:none; }
-  </style>
-</head>
-<body>
-  <h1>🏴‍☠️ Embarque pour l'Enveloppe Rouge !</h1>
-  <p>Transférer <strong>0.1 SOL</strong> au trésor du Kraken.</p>
-  <p>Préparation...</p>
-  <a id="phantomLink" href="#" class="btn">⛵ Si rien ne se passe, clique ici</a>
-
+<head><meta charset="UTF-8"><title>Pay</title></head>
+<body style="background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;padding:2rem;">
+  <h1>Enveloppe Rouge – test</h1>
+  <div id="info"></div>
+  <a id="phantomLink" href="#" style="display:none;padding:1rem 2rem;background:crimson;color:#fff;border-radius:8px;text-decoration:none;">
+    ⛵ Ouvrir Phantom
+  </a>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const tgid = params.get("tgid");
-    if (!tgid) {
-      document.body.innerHTML = "<h2>❌ Erreur : ID manquant. Relance via Telegram.</h2>";
+    const p = new URLSearchParams(window.location.search);
+    const t = p.get('tgid');
+    if (!t) {
+      document.getElementById('info').innerText = 'Erreur : pas d’ID.';
     } else {
-      const address = "AiSSEWWcUfx1Hfmfi5r6uHQpmoCkyZmibQpg1p3R81Ki";
-      const amount = 0.1;
-      const memo = `rouge_${tgid}`;
-      const url = `solana:${address}?amount=${amount}&memo=${memo}`;
-
-      // Tentative auto-redirection
+      const url = `solana:AiSSEWWcUfx1Hfmfi5r6uHQpmoCkyZmibQpg1p3R81Ki?amount=0.1&memo=rouge_${t}`;
+      document.getElementById('info').innerText = url;
       window.location.href = url;
-      // Lien de secours
-      document.getElementById("phantomLink").href = url;
+      setTimeout(() => {
+        const btn = document.getElementById('phantomLink');
+        btn.href = url;
+        btn.style.display = 'block';
+      }, 1500);
     }
   </script>
 </body>
